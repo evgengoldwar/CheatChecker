@@ -11,7 +11,7 @@ cheatchecker.button.download=Скачать
 cheatchecker.hover.installed=Установлено:
 cheatchecker.hover.latest=Последняя:
 cheatchecker.hover.open_github=Нажмите, чтобы открыть последний релиз
-cheatchecker.hover.open_release=Открыть страницу релиза версии %s
+cheatchecker.hover.open_release=Открыть в браузере
 cheatchecker.hover.ahead=Новее последнего релиза (%s)
 cheatchecker.hover.recheck=Проверить ещё раз
 

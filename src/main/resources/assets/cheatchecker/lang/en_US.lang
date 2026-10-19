@@ -11,7 +11,7 @@ cheatchecker.button.download=Download
 cheatchecker.hover.installed=Installed:
 cheatchecker.hover.latest=Latest:
 cheatchecker.hover.open_github=Click to open the latest release
-cheatchecker.hover.open_release=Open the release page of version %s
+cheatchecker.hover.open_release=Open in browser
 cheatchecker.hover.ahead=Newer than the latest release (%s)
 cheatchecker.hover.recheck=Check again
 

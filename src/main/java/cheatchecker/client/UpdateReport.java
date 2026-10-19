@@ -157,13 +157,14 @@ final class UpdateReport {
         String label = I18n.format("cheatchecker.button.download") + (withVersion ? " " + latest.version : "");
         IChatComponent button = line(text("[", FRAME), bold("↓ " + label, color), text("]", FRAME));
         openUrl(button, latest.pageUrl);
+        // Kept short: the button sits at the right edge of the chat, so a wide tooltip runs off the left of the screen.
         return hover(
             button,
-            I18n.format(
-                "cheatchecker.hover.open_release",
-                EnumChatFormatting.GREEN + latest.version.toString() + EnumChatFormatting.GRAY) + "\n"
-                + EnumChatFormatting.DARK_GRAY
-                + latest.pageUrl.replace("https://", ""));
+            EnumChatFormatting.GREEN + latest.version.toString()
+                + (latest.publishedAt != null ? EnumChatFormatting.DARK_GRAY + " " + latest.publishedAt : "")
+                + "\n"
+                + EnumChatFormatting.GRAY
+                + I18n.format("cheatchecker.hover.open_release"));
     }
 
     private static IChatComponent summary(int upToDate, int outdated, int missing, int unknown) {
