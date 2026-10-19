@@ -12,7 +12,6 @@ public class Config {
     public static boolean showOnEveryWorldJoin = true;
     public static boolean showUpToDate = true;
     public static boolean onlyShowWhenSomethingToDo = false;
-    public static boolean allowInGameInstall = true;
 
     public static void synchronizeConfiguration(File configFile) {
         Configuration configuration = new Configuration(configFile);
@@ -34,11 +33,6 @@ public class Config {
             CATEGORY_UPDATES,
             onlyShowWhenSomethingToDo,
             "Only show the report when a mod can be updated or installed.");
-        allowInGameInstall = configuration.getBoolean(
-            "allowInGameInstall",
-            CATEGORY_UPDATES,
-            allowInGameInstall,
-            "Allow the report's buttons to download jars into the mods folder (otherwise they open the release page).");
 
         if (configuration.hasChanged()) {
             configuration.save();

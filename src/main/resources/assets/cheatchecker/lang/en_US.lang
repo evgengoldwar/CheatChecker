@@ -5,25 +5,15 @@ cheatchecker.state.ahead=dev build
 cheatchecker.state.missing=not installed
 cheatchecker.state.no_releases=no releases yet
 cheatchecker.state.error=check failed
-cheatchecker.state.restart=downloaded, restart the game
 
-cheatchecker.button.update=Update
-cheatchecker.button.install=Install
-cheatchecker.button.update_all=Update all
-cheatchecker.button.install_all=Install all
+cheatchecker.button.download=Download
 
 cheatchecker.hover.installed=Installed:
 cheatchecker.hover.latest=Latest:
-cheatchecker.hover.open_github=Click to open the release page
-cheatchecker.hover.open_release=Open the page of version %s
+cheatchecker.hover.open_github=Click to open the latest release
+cheatchecker.hover.open_release=Open the release page of version %s
 cheatchecker.hover.ahead=Newer than the latest release (%s)
-cheatchecker.hover.update=Update %s to %s
-cheatchecker.hover.install=Install %s %s
-cheatchecker.hover.update_all=Download every available update
-cheatchecker.hover.install_all=Install every missing mod
-cheatchecker.hover.restart_needed=The jar goes into the mods folder: restart the game to use it.
 cheatchecker.hover.recheck=Check again
-cheatchecker.hover.old_on_exit=The game still has the old jar open, it is deleted when the game exits.
 
 cheatchecker.summary.up_to_date=Up to date: %s
 cheatchecker.summary.outdated=Updates available: %s
@@ -32,15 +22,3 @@ cheatchecker.summary.unknown=Could not compare: %s
 cheatchecker.summary.all_good=Everything is up to date!
 
 cheatchecker.msg.checking=Checking for updates...
-cheatchecker.msg.downloading=Downloading %s %s...
-cheatchecker.msg.failed=Could not download %s (hover for details)
-cheatchecker.msg.old_on_exit=old jar removed on exit
-cheatchecker.msg.restart=Done: %s. Restart the game to apply.
-cheatchecker.msg.open_mods=Open mods folder
-cheatchecker.msg.already=%s is already downloaded, restart the game.
-cheatchecker.msg.nothing=Nothing to download for %s.
-cheatchecker.msg.nothing_all=Nothing to download.
-cheatchecker.msg.busy=A download is already running.
-cheatchecker.msg.unknown_mod=Unknown mod: %s
-cheatchecker.msg.not_checked=The update check has not finished yet.
-cheatchecker.msg.disabled=In-game install is turned off in the config.

@@ -1,6 +1,5 @@
 package cheatchecker.update;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -94,18 +93,16 @@ public final class UpdateChecker {
 
     private static ModStatus check(TrackedMod mod, ModContainer container) {
         ModVersion installed = null;
-        File source = null;
         if (container != null) {
             installed = ModVersion
                 .parse(mod == TrackedMod.CHEAT_CHECKER ? Tags.VERSION : container.getVersion());
-            source = container.getSource();
         }
         ReleaseInfo latest;
         try {
             latest = fetchLatest(mod);
         } catch (Exception e) {
             CheatChecker.LOG.warn("Could not check {} for updates: {}", mod.displayName, e.toString());
-            return new ModStatus(mod, installed, source, null, ModStatus.State.ERROR, e.getMessage());
+            return new ModStatus(mod, installed, null, ModStatus.State.ERROR, e.getMessage());
         }
         ModStatus.State state;
         if (latest == null) {
@@ -117,7 +114,7 @@ public final class UpdateChecker {
             state = cmp == 0 ? ModStatus.State.UP_TO_DATE
                 : cmp < 0 ? ModStatus.State.OUTDATED : ModStatus.State.AHEAD;
         }
-        return new ModStatus(mod, installed, source, latest, state, null);
+        return new ModStatus(mod, installed, latest, state, null);
     }
 
     /** The highest-versioned published release, else the highest tag, else null. */
@@ -134,15 +131,10 @@ public final class UpdateChecker {
             if (!version.isParsed() || (best != null && version.compareTo(best.version) <= 0)) {
                 continue;
             }
-            JsonObject jar = pickJar(release.getAsJsonArray("assets"));
             String date = str(release, "published_at");
             best = new ReleaseInfo(
                 version,
                 str(release, "html_url"),
-                jar == null ? null : str(jar, "name"),
-                jar == null ? null : str(jar, "browser_download_url"),
-                jar == null ? 0 : jar.get("size")
-                    .getAsLong(),
                 date != null && date.length() >= 10 ? date.substring(0, 10) : null);
         }
         if (best != null) {
@@ -152,33 +144,7 @@ public final class UpdateChecker {
         for (JsonElement element : tags) {
             ModVersion version = ModVersion.parse(str(element.getAsJsonObject(), "name"));
             if (version.isParsed() && (best == null || version.compareTo(best.version) > 0)) {
-                best = new ReleaseInfo(version, mod.releasesUrl(), null, null, 0, null);
-            }
-        }
-        return best;
-    }
-
-    /** The mod's own jar among a release's assets: not the dev, sources, api or javadoc one. */
-    private static JsonObject pickJar(JsonArray assets) {
-        JsonObject best = null;
-        if (assets == null) {
-            return null;
-        }
-        for (JsonElement element : assets) {
-            JsonObject asset = element.getAsJsonObject();
-            String name = str(asset, "name");
-            if (name == null || !name.endsWith(".jar")) {
-                continue;
-            }
-            String lower = name.toLowerCase();
-            if (lower.endsWith("-dev.jar") || lower.endsWith("-sources.jar")
-                || lower.endsWith("-api.jar")
-                || lower.endsWith("-javadoc.jar")
-                || lower.endsWith("-dev-preshadow.jar")) {
-                continue;
-            }
-            if (best == null || name.length() < str(best, "name").length()) {
-                best = asset;
+                best = new ReleaseInfo(version, mod.releasesUrl(), null);
             }
         }
         return best;
@@ -205,7 +171,7 @@ public final class UpdateChecker {
         }
     }
 
-    static HttpURLConnection open(String url) throws IOException {
+    private static HttpURLConnection open(String url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setConnectTimeout(TIMEOUT_MS);
         connection.setReadTimeout(TIMEOUT_MS);

@@ -24,13 +24,13 @@ import cheatchecker.update.ReleaseInfo;
  * <pre>
  * ━━━━━━━━━━ ✦ Mods by evgengoldwar ✦ ━━━━━━━━━━
  *  ✔ InfoHUD           0.0.24 · up to date
- *  ▲ LagFinder         0.0.1 ➜ 0.0.2   [↑ Update]
- *  ✘ CraftInspector    not installed   [↓ Install]
- *  ✔ 4  ▲ 1  ✘ 2        [↑ Update all] [↓ Install all]
+ *  ▲ LagFinder         0.0.1 ➜ 0.0.2   [↓ Download]
+ *  ✘ CraftInspector    not installed   [↓ Download 0.0.3]
+ *  ✔ 4  ▲ 1  ✘ 1                                   ↻
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * </pre>
  *
- * Every mod name opens its GitHub page, every button runs {@code /cheatchecker}, every piece has a tooltip.
+ * Mod names and buttons open the latest release on GitHub; every piece has a tooltip.
  */
 final class UpdateReport {
 
@@ -75,7 +75,7 @@ final class UpdateReport {
             lines.add(modLine(status, nameWidth));
         }
 
-        lines.add(summary(upToDate, outdated, missing, unknown, results));
+        lines.add(summary(upToDate, outdated, missing, unknown));
         lines.add(ChatLines.fullRule(FRAME));
         return lines;
     }
@@ -102,9 +102,6 @@ final class UpdateReport {
                 icon = text("?", EnumChatFormatting.DARK_GRAY);
                 nameColor = EnumChatFormatting.GRAY;
         }
-        if (status.downloaded) {
-            icon = text("⟳", EnumChatFormatting.LIGHT_PURPLE);
-        }
 
         String page = status.latest != null ? status.latest.pageUrl : status.mod.repoUrl();
         IChatComponent nameComponent = hover(
@@ -118,12 +115,6 @@ final class UpdateReport {
     /** The part of a mod line after its name. */
     private static IChatComponent state(ModStatus status) {
         ReleaseInfo latest = status.latest;
-        if (status.downloaded) {
-            return line(
-                text(latest.version.toString(), EnumChatFormatting.LIGHT_PURPLE),
-                text(" · ", FRAME),
-                text(I18n.format("cheatchecker.state.restart"), EnumChatFormatting.LIGHT_PURPLE));
-        }
         switch (status.state) {
             case UP_TO_DATE:
                 return line(
@@ -143,12 +134,12 @@ final class UpdateReport {
                     text(" ➜ ", EnumChatFormatting.GRAY),
                     text(latest.version.toString(), EnumChatFormatting.GREEN),
                     text("  ", FRAME),
-                    button(status, "update", EnumChatFormatting.GOLD));
+                    button(latest, false, EnumChatFormatting.GOLD));
             case MISSING:
                 return line(
                     text(I18n.format("cheatchecker.state.missing"), EnumChatFormatting.DARK_GRAY),
                     text("  ", FRAME),
-                    button(status, "install", EnumChatFormatting.AQUA));
+                    button(latest, true, EnumChatFormatting.AQUA));
             case NO_RELEASES:
                 return line(
                     text(status.installed != null ? status.installed.toString() : "—", EnumChatFormatting.GRAY),
@@ -161,35 +152,21 @@ final class UpdateReport {
         }
     }
 
-    /** {@code [↑ Update]} / {@code [↓ Install]}: runs the command when the release has a jar, else opens its page. */
-    private static IChatComponent button(ModStatus status, String action, EnumChatFormatting color) {
-        String arrow = "update".equals(action) ? "↑ " : "↓ ";
-        IChatComponent button = line(
-            text("[", FRAME),
-            bold(arrow + I18n.format("cheatchecker.button." + action), color),
-            text("]", FRAME));
-        ReleaseInfo latest = status.latest;
-        if (latest.hasJar() && Config.allowInGameInstall) {
-            runCommand(button, "/" + UpdateCommand.NAME + " " + action + " " + status.mod.modId);
-            return hover(
-                button,
-                I18n.format(
-                    "cheatchecker.hover." + action,
-                    EnumChatFormatting.WHITE + status.mod.displayName + EnumChatFormatting.GRAY,
-                    EnumChatFormatting.GREEN + latest.version.toString() + EnumChatFormatting.GRAY) + "\n"
-                    + EnumChatFormatting.DARK_GRAY
-                    + latest.assetName
-                    + (latest.assetSize > 0 ? " · " + size(latest.assetSize) : "")
-                    + "\n\n"
-                    + EnumChatFormatting.YELLOW
-                    + I18n.format("cheatchecker.hover.restart_needed"));
-        }
+    /** {@code [↓ Download]}: opens the page of the latest release. */
+    private static IChatComponent button(ReleaseInfo latest, boolean withVersion, EnumChatFormatting color) {
+        String label = I18n.format("cheatchecker.button.download") + (withVersion ? " " + latest.version : "");
+        IChatComponent button = line(text("[", FRAME), bold("↓ " + label, color), text("]", FRAME));
         openUrl(button, latest.pageUrl);
-        return hover(button, I18n.format("cheatchecker.hover.open_release", latest.version));
+        return hover(
+            button,
+            I18n.format(
+                "cheatchecker.hover.open_release",
+                EnumChatFormatting.GREEN + latest.version.toString() + EnumChatFormatting.GRAY) + "\n"
+                + EnumChatFormatting.DARK_GRAY
+                + latest.pageUrl.replace("https://", ""));
     }
 
-    private static IChatComponent summary(int upToDate, int outdated, int missing, int unknown,
-        List<ModStatus> results) {
+    private static IChatComponent summary(int upToDate, int outdated, int missing, int unknown) {
         List<IChatComponent> parts = new ArrayList<>();
         parts.add(text(" ", FRAME));
         parts.add(
@@ -213,24 +190,7 @@ final class UpdateReport {
                     text("? " + unknown, EnumChatFormatting.GRAY),
                     I18n.format("cheatchecker.summary.unknown", unknown)));
         }
-
-        boolean canUpdate = false, canInstall = false;
-        for (ModStatus status : results) {
-            canUpdate |= status.state == ModStatus.State.OUTDATED && status.canDownload();
-            canInstall |= status.state == ModStatus.State.MISSING && status.canDownload();
-        }
-        if (Config.allowInGameInstall && (canUpdate || canInstall)) {
-            parts.add(text("    ", FRAME));
-            if (canUpdate) {
-                parts.add(allButton("update_all", "↑ ", EnumChatFormatting.GOLD));
-            }
-            if (canUpdate && canInstall) {
-                parts.add(text(" ", FRAME));
-            }
-            if (canInstall) {
-                parts.add(allButton("install_all", "↓ ", EnumChatFormatting.AQUA));
-            }
-        } else if (outdated == 0 && missing == 0 && unknown == 0) {
+        if (outdated == 0 && missing == 0 && unknown == 0) {
             parts.add(text("    ", FRAME));
             parts.add(text(I18n.format("cheatchecker.summary.all_good"), EnumChatFormatting.GREEN));
         }
@@ -240,19 +200,6 @@ final class UpdateReport {
                 runCommand(text("↻", EnumChatFormatting.DARK_AQUA), "/" + UpdateCommand.NAME + " check"),
                 I18n.format("cheatchecker.hover.recheck")));
         return line(parts.toArray(new IChatComponent[0]));
-    }
-
-    private static IChatComponent allButton(String action, String arrow, EnumChatFormatting color) {
-        IChatComponent button = line(
-            text("[", FRAME),
-            bold(arrow + I18n.format("cheatchecker.button." + action), color),
-            text("]", FRAME));
-        runCommand(button, "/" + UpdateCommand.NAME + " " + action.replace("_all", "") + " all");
-        return hover(
-            button,
-            I18n.format("cheatchecker.hover." + action) + "\n\n"
-                + EnumChatFormatting.YELLOW
-                + I18n.format("cheatchecker.hover.restart_needed"));
     }
 
     private static String tooltip(ModStatus status) {
@@ -287,12 +234,5 @@ final class UpdateReport {
             .append(status.mod.repoUrl()
                 .replace("https://", ""));
         return sb.toString();
-    }
-
-    static String size(long bytes) {
-        if (bytes >= 1024 * 1024) {
-            return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
-        }
-        return Math.max(1, bytes / 1024) + " KB";
     }
 }

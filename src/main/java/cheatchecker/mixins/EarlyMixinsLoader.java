@@ -1,8 +1,5 @@
 package cheatchecker.mixins;
 
-import net.minecraft.launchwrapper.Launch;
-
-import cheatchecker.update.PendingDeletions;
 import com.gtnewhorizon.gtnhmixins.IEarlyMixinLoader;
 import com.gtnewhorizon.gtnhmixins.builders.IMixins;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
@@ -13,13 +10,6 @@ import java.util.Set;
 
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 public class EarlyMixinsLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
-
-    public EarlyMixinsLoader() {
-        // Before FML looks for mods: old jars left behind by an in-game update must be gone, or the mod loads twice.
-        if (Launch.minecraftHome != null) {
-            PendingDeletions.processOnStartup(Launch.minecraftHome);
-        }
-    }
 
     @Override
     public String[] getASMTransformerClass() {
