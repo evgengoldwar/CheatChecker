@@ -22,3 +22,4 @@ cheatchecker.summary.unknown=Could not compare: %s
 cheatchecker.summary.all_good=Everything is up to date!
 
 cheatchecker.msg.checking=Checking for updates...
+cheatchecker.msg.check_failed=Could not check for updates (hover for details)

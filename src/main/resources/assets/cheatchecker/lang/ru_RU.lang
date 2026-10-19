@@ -22,3 +22,4 @@ cheatchecker.summary.unknown=Не удалось сравнить: %s
 cheatchecker.summary.all_good=Всё актуально!
 
 cheatchecker.msg.checking=Проверяю обновления...
+cheatchecker.msg.check_failed=Не удалось проверить обновления (наведите для подробностей)

@@ -40,6 +40,22 @@ final class UpdateReport {
 
     static List<IChatComponent> build(List<ModStatus> results) {
         List<IChatComponent> lines = new ArrayList<>();
+        if (allFailed(results)) {
+            // Offline or rate-limited: one line instead of a full frame of identical errors.
+            lines.add(
+                line(
+                    bold("✦ ", EnumChatFormatting.GOLD),
+                    text("CheatChecker", EnumChatFormatting.YELLOW),
+                    text(" » ", FRAME),
+                    hover(
+                        text("⚠ " + I18n.format("cheatchecker.msg.check_failed"), EnumChatFormatting.RED),
+                        EnumChatFormatting.RED + String.valueOf(results.get(0).error)),
+                    text("  ", FRAME),
+                    hover(
+                        runCommand(text("↻", EnumChatFormatting.DARK_AQUA), "/" + UpdateCommand.NAME + " check"),
+                        I18n.format("cheatchecker.hover.recheck"))));
+            return lines;
+        }
         lines.add(
             ChatLines.titledRule(
                 line(
@@ -201,6 +217,15 @@ final class UpdateReport {
                 runCommand(text("↻", EnumChatFormatting.DARK_AQUA), "/" + UpdateCommand.NAME + " check"),
                 I18n.format("cheatchecker.hover.recheck")));
         return line(parts.toArray(new IChatComponent[0]));
+    }
+
+    private static boolean allFailed(List<ModStatus> results) {
+        for (ModStatus status : results) {
+            if (status.state != ModStatus.State.ERROR) {
+                return false;
+            }
+        }
+        return !results.isEmpty();
     }
 
     private static String tooltip(ModStatus status) {

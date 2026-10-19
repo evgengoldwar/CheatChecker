@@ -5,8 +5,10 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
 
+import cheatchecker.CheatChecker;
 import cheatchecker.Config;
 import cheatchecker.update.ModStatus;
 import cheatchecker.update.UpdateChecker;
@@ -22,7 +24,15 @@ public final class UpdateNotifier {
     /** Ticks after entering a world before the report shows, so it lands below the join messages. */
     private static final int JOIN_DELAY_TICKS = 60;
 
+    /**
+     * Chat line ids of the report, one per line: printing a report replaces the previous one instead of stacking a
+     * copy under it on every world join.
+     */
+    private static final int REPORT_LINE_ID = 0x0C4EC400;
+    private static final int MAX_REPORT_LINES = 32;
+
     private static final Queue<Runnable> TASKS = new ConcurrentLinkedQueue<>();
+    private static int reportLines;
 
     private int ticksInWorld;
     private boolean shownThisWorld;
@@ -38,15 +48,15 @@ public final class UpdateNotifier {
             .printChatMessage(message);
     }
 
-    /** Replaces the earlier message with the same id (progress lines). */
-    static void print(IChatComponent message, int id) {
-        Minecraft.getMinecraft().ingameGUI.getChatGUI()
-            .printChatMessageWithOptionalDeletion(message, id);
-    }
-
     static void printReport(List<ModStatus> results) {
-        for (IChatComponent line : UpdateReport.build(results)) {
-            print(line);
+        GuiNewChat chat = Minecraft.getMinecraft().ingameGUI.getChatGUI();
+        List<IChatComponent> lines = UpdateReport.build(results);
+        for (int i = 0; i < reportLines; i++) {
+            chat.deleteChatLine(REPORT_LINE_ID + i);
+        }
+        reportLines = Math.min(lines.size(), MAX_REPORT_LINES);
+        for (int i = 0; i < reportLines; i++) {
+            chat.printChatMessageWithOptionalDeletion(lines.get(i), REPORT_LINE_ID + i);
         }
     }
 
@@ -63,11 +73,24 @@ public final class UpdateNotifier {
         }
         Runnable task;
         while ((task = TASKS.poll()) != null) {
-            task.run();
+            try {
+                task.run();
+            } catch (RuntimeException e) {
+                CheatChecker.LOG.error("Could not show the update report", e);
+            }
         }
         if (shownThisWorld || ticksInWorld++ < JOIN_DELAY_TICKS) {
             return;
         }
+        try {
+            showOnJoin();
+        } catch (RuntimeException e) {
+            shownThisWorld = true;
+            CheatChecker.LOG.error("Could not show the update report", e);
+        }
+    }
+
+    private void showOnJoin() {
         List<ModStatus> results = UpdateChecker.getResults();
         if (results == null) {
             // Still checking (or offline): try again on a later tick, the check may yet finish.

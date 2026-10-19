@@ -64,14 +64,12 @@ public final class UpdateCommand extends CommandBase {
             UpdateNotifier.printReport(results);
             return;
         }
-        boolean started = UpdateChecker.startAsync(r -> UpdateNotifier.runInWorld(() -> UpdateNotifier.printReport(r)));
-        if (started) {
-            UpdateNotifier.print(
-                line(
-                    bold("✦ ", EnumChatFormatting.GOLD),
-                    text("CheatChecker", EnumChatFormatting.YELLOW),
-                    text(" » ", EnumChatFormatting.DARK_GRAY),
-                    text(I18n.format("cheatchecker.msg.checking"), EnumChatFormatting.GRAY)));
-        }
+        UpdateNotifier.print(
+            line(
+                bold("✦ ", EnumChatFormatting.GOLD),
+                text("CheatChecker", EnumChatFormatting.YELLOW),
+                text(" » ", EnumChatFormatting.DARK_GRAY),
+                text(I18n.format("cheatchecker.msg.checking"), EnumChatFormatting.GRAY)));
+        UpdateChecker.startAsync(r -> UpdateNotifier.runInWorld(() -> UpdateNotifier.printReport(r)));
     }
 }

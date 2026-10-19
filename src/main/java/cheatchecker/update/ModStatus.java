@@ -26,13 +26,16 @@ public final class ModStatus {
     public final State state;
     /** Why the check failed, on {@link State#ERROR}. */
     public final String error;
+    /** On {@link State#ERROR}: GitHub could not be reached or refuses more requests, so no other mod was asked. */
+    public final boolean offline;
 
     public ModStatus(TrackedMod mod, ModVersion installed, ReleaseInfo latest, State state,
-        String error) {
+        String error, boolean offline) {
         this.mod = mod;
         this.installed = installed;
         this.latest = latest;
         this.state = state;
         this.error = error;
+        this.offline = offline;
     }
 }
