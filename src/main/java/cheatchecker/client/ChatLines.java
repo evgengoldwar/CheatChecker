@@ -128,8 +128,4 @@ final class ChatLines {
         int side = Math.max((total - width(title)) / 2, 12);
         return line(rule(side, color), title, rule(side, color));
     }
-
-    static IChatComponent fullRule(EnumChatFormatting color) {
-        return rule(chatWidth() - 6, color);
-    }
 }

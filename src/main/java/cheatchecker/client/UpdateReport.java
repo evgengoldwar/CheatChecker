@@ -23,7 +23,7 @@ import cheatchecker.update.ReleaseInfo;
  * The update report shown in chat, in aligned columns:
  *
  * <pre>
- * ══════════ ✦ Mods by EvgenWarGold ✦ ══════════
+ * ══════════ » Mods by EvgenWarGold « ══════════
  *  ■ InfoHUD            0.0.24   up to date
  *  ■ LagFinder          0.0.1  ➜ 0.0.2  [↓ Update]
  *  ■ CraftInspector     —        [↓ Install]
@@ -58,13 +58,15 @@ final class UpdateReport {
                     recheck()));
             return lines;
         }
-        lines.add(
-            ChatLines.titledRule(
-                line(
-                    text(" ✦ ", EnumChatFormatting.GOLD),
-                    bold(I18n.format("cheatchecker.report.title"), EnumChatFormatting.YELLOW),
-                    text(" ✦ ", EnumChatFormatting.GOLD)),
-                FRAME));
+        // « and » come from the default font: font mods may draw Unicode glyphs such as ✦ wider than they report,
+        // which pushes the right half of the rule past the bottom one.
+        IChatComponent title = ChatLines.titledRule(
+            line(
+                text(" » ", EnumChatFormatting.GOLD),
+                bold(I18n.format("cheatchecker.report.title"), EnumChatFormatting.YELLOW),
+                text(" « ", EnumChatFormatting.GOLD)),
+            FRAME);
+        lines.add(title);
 
         List<ModStatus> shown = new ArrayList<>();
         int upToDate = 0, outdated = 0, missing = 0, unknown = 0;
@@ -98,7 +100,8 @@ final class UpdateReport {
         }
 
         lines.add(summary(upToDate, outdated, missing, unknown));
-        lines.add(ChatLines.fullRule(FRAME));
+        // As wide as the top line, so the frame closes evenly.
+        lines.add(ChatLines.rule(ChatLines.width(title), FRAME));
         return lines;
     }
 
