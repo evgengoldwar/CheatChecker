@@ -6,7 +6,8 @@ cheatchecker.state.missing=not installed
 cheatchecker.state.no_releases=no releases yet
 cheatchecker.state.error=check failed
 
-cheatchecker.button.download=Download
+cheatchecker.button.update=Update
+cheatchecker.button.install=Install
 
 cheatchecker.hover.installed=Installed:
 cheatchecker.hover.latest=Latest:

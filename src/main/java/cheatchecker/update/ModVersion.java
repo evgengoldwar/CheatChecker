@@ -9,7 +9,11 @@ import java.util.regex.Pattern;
  */
 public final class ModVersion implements Comparable<ModVersion> {
 
-    private static final Pattern NUMBERS = Pattern.compile("^[vV]?(\\d+(?:\\.\\d+)*)");
+    /**
+     * At least two dot-separated numbers, not running straight into letters: {@code 0.0.16-FixBug.37} is 0.0.16, but a
+     * commit hash such as {@code 15221ab} is no version at all.
+     */
+    private static final Pattern NUMBERS = Pattern.compile("^[vV]?(\\d++(?:\\.\\d++)++)(?![0-9A-Za-z])");
 
     public final String raw;
     private final int[] parts;
@@ -56,6 +60,29 @@ public final class ModVersion implements Comparable<ModVersion> {
             }
         }
         return 0;
+    }
+
+    /**
+     * Compact form for a chat column: just the numbers ({@code 0.0.16} for {@code 0.0.16-FixBug.37+cb856abb62}), or
+     * the first 8 characters of an unparseable version such as a bare commit hash.
+     */
+    public String shortText() {
+        if (parts == null) {
+            return raw.length() > 8 ? raw.substring(0, 8) : raw;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < parts.length; i++) {
+            if (i > 0) {
+                sb.append('.');
+            }
+            sb.append(parts[i]);
+        }
+        return sb.toString();
+    }
+
+    /** Whether {@link #shortText()} leaves something out (a dev build suffix). */
+    public boolean isShortened() {
+        return !shortText().equals(toString());
     }
 
     /** The version without a leading {@code v}, as shown to the player. */

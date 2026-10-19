@@ -13,6 +13,8 @@ import net.minecraft.util.MathHelper;
 /** Building blocks for chat messages: styled pieces, pixel padding and full-width rules sized to the chat box. */
 final class ChatLines {
 
+    private static final char RULE_CHAR = '\u2550';
+
     private ChatLines() {}
 
     static IChatComponent text(String text, EnumChatFormatting color) {
@@ -76,33 +78,54 @@ final class ChatLines {
         return font().getStringWidth(text);
     }
 
-    /** Plain spaces at least {@code pixels} wide. */
-    static String spaces(int pixels) {
-        int space = Math.max(font().getCharWidth(' '), 1);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < (pixels + space - 1) / space; i++) {
-            sb.append(' ');
+    /**
+     * Spaces exactly {@code pixels} wide where possible, for aligned columns: a plain space is 4px and a bold one 5px,
+     * so up to three bold spaces make up the remainder. Narrower gaps round up to whole plain spaces.
+     */
+    static IChatComponent gap(int pixels) {
+        int plain = Math.max(font().getCharWidth(' '), 1);
+        int bold = plain + 1;
+        int bolds = 0;
+        while (bolds < plain && (pixels - bolds * bold) % plain != 0) {
+            bolds++;
         }
-        return sb.toString();
+        int plains;
+        if (pixels - bolds * bold < 0 || (pixels - bolds * bold) % plain != 0) {
+            bolds = 0;
+            plains = Math.max(0, (pixels + plain - 1) / plain);
+        } else {
+            plains = (pixels - bolds * bold) / plain;
+        }
+        IChatComponent root = new ChatComponentText(repeat(' ', plains));
+        if (bolds > 0) {
+            IChatComponent boldSpaces = new ChatComponentText(repeat(' ', bolds));
+            boldSpaces.setChatStyle(new ChatStyle().setBold(true));
+            root.appendSibling(boldSpaces);
+        }
+        return root;
     }
 
-    /** Struck-through spaces: a solid line {@code pixels} wide (no wider). */
+    /**
+     * A solid line at most {@code pixels} wide, drawn with box-drawing characters from the default font. (Struck-through
+     * spaces are not drawn by every font renderer, so they are not used.)
+     */
     static IChatComponent rule(int pixels, EnumChatFormatting color) {
-        int space = Math.max(font().getCharWidth(' '), 1);
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < pixels / space; i++) {
-            sb.append(' ');
+        int ch = Math.max(font().getCharWidth(RULE_CHAR), 1);
+        return text(repeat(RULE_CHAR, Math.max(pixels, 0) / ch), color);
+    }
+
+    private static String repeat(char c, int n) {
+        StringBuilder sb = new StringBuilder(Math.max(n, 0));
+        for (int i = 0; i < n; i++) {
+            sb.append(c);
         }
-        IChatComponent component = text(sb.toString(), color);
-        component.getChatStyle()
-            .setStrikethrough(true);
-        return component;
+        return sb.toString();
     }
 
     /** A rule over the whole chat width with {@code title} in its middle. */
     static IChatComponent titledRule(IChatComponent title, EnumChatFormatting color) {
         int total = chatWidth() - 6;
-        int side = Math.max((total - width(title)) / 2, 8);
+        int side = Math.max((total - width(title)) / 2, 12);
         return line(rule(side, color), title, rule(side, color));
     }
 

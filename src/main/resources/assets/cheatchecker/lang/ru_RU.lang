@@ -1,12 +1,13 @@
 cheatchecker.report.title=Моды EvgenWarGold
 
-cheatchecker.state.up_to_date=актуальная версия
+cheatchecker.state.up_to_date=актуальная
 cheatchecker.state.ahead=dev-сборка
 cheatchecker.state.missing=не установлен
 cheatchecker.state.no_releases=релизов пока нет
 cheatchecker.state.error=ошибка проверки
 
-cheatchecker.button.download=Скачать
+cheatchecker.button.update=Обновить
+cheatchecker.button.install=Установить
 
 cheatchecker.hover.installed=Установлено:
 cheatchecker.hover.latest=Последняя:
