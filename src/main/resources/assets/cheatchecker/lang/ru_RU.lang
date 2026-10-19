@@ -1,0 +1,46 @@
+cheatchecker.report.title=Моды evgengoldwar
+
+cheatchecker.state.up_to_date=актуальная версия
+cheatchecker.state.ahead=dev-сборка
+cheatchecker.state.missing=не установлен
+cheatchecker.state.no_releases=релизов пока нет
+cheatchecker.state.error=ошибка проверки
+cheatchecker.state.restart=скачано, перезапустите игру
+
+cheatchecker.button.update=Обновить
+cheatchecker.button.install=Установить
+cheatchecker.button.update_all=Обновить всё
+cheatchecker.button.install_all=Установить всё
+
+cheatchecker.hover.installed=Установлено:
+cheatchecker.hover.latest=Последняя:
+cheatchecker.hover.open_github=Нажмите, чтобы открыть страницу релиза
+cheatchecker.hover.open_release=Открыть страницу версии %s
+cheatchecker.hover.ahead=Новее последнего релиза (%s)
+cheatchecker.hover.update=Обновить %s до %s
+cheatchecker.hover.install=Установить %s %s
+cheatchecker.hover.update_all=Скачать все доступные обновления
+cheatchecker.hover.install_all=Установить все недостающие моды
+cheatchecker.hover.restart_needed=Файл скачается в папку mods: перезапустите игру, чтобы он заработал.
+cheatchecker.hover.recheck=Проверить ещё раз
+cheatchecker.hover.old_on_exit=Игра ещё держит старый jar открытым, он удалится при выходе из игры.
+
+cheatchecker.summary.up_to_date=Актуальные: %s
+cheatchecker.summary.outdated=Есть обновление: %s
+cheatchecker.summary.missing=Не установлены: %s
+cheatchecker.summary.unknown=Не удалось сравнить: %s
+cheatchecker.summary.all_good=Всё актуально!
+
+cheatchecker.msg.checking=Проверяю обновления...
+cheatchecker.msg.downloading=Скачиваю %s %s...
+cheatchecker.msg.failed=Не удалось скачать %s (наведите для подробностей)
+cheatchecker.msg.old_on_exit=старый jar удалится при выходе
+cheatchecker.msg.restart=Готово: %s. Перезапустите игру, чтобы применить.
+cheatchecker.msg.open_mods=Открыть папку mods
+cheatchecker.msg.already=%s уже скачан, перезапустите игру.
+cheatchecker.msg.nothing=Для %s нечего скачивать.
+cheatchecker.msg.nothing_all=Нечего скачивать.
+cheatchecker.msg.busy=Загрузка уже идёт.
+cheatchecker.msg.unknown_mod=Неизвестный мод: %s
+cheatchecker.msg.not_checked=Проверка обновлений ещё не завершилась.
+cheatchecker.msg.disabled=Установка из игры выключена в конфиге.
