@@ -12,7 +12,6 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         Config.synchronizeConfiguration(event.getSuggestedConfigurationFile());
 
-        CheatChecker.LOG.info(Config.greeting);
         CheatChecker.LOG.info("I am CheatChecker at version " + Tags.VERSION);
     }
 
