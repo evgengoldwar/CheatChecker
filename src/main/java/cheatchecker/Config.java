@@ -20,7 +20,7 @@ public class Config {
             "enableUpdateCheck",
             CATEGORY_UPDATES,
             enableUpdateCheck,
-            "Check GitHub for new versions of evgengoldwar's mods when the game starts.");
+            "Check GitHub for new versions of EvgenWarGold's mods when the game starts.");
         showOnEveryWorldJoin = configuration.getBoolean(
             "showOnEveryWorldJoin",
             CATEGORY_UPDATES,

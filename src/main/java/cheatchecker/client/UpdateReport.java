@@ -22,7 +22,7 @@ import cheatchecker.update.ReleaseInfo;
  * The update report shown in chat:
  *
  * <pre>
- * ━━━━━━━━━━ ✦ Mods by evgengoldwar ✦ ━━━━━━━━━━
+ * ━━━━━━━━━━ ✦ Mods by EvgenWarGold ✦ ━━━━━━━━━━
  *  ✔ InfoHUD           0.0.24 · up to date
  *  ▲ LagFinder         0.0.1 ➜ 0.0.2   [↓ Download]
  *  ✘ CraftInspector    not installed   [↓ Download 0.0.3]
